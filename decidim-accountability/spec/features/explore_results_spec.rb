@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-describe "Explore results", type: :feature do
+describe "Explore results", versioning: true, type: :feature do
   include_context "feature"
   let(:manifest_name) { "accountability" }
 
@@ -54,6 +54,12 @@ describe "Explore results", type: :feature do
       expect(page).to have_i18n_content(result.title)
       expect(page).to have_i18n_content(result.description)
       expect(page).to have_content(result.reference)
+    end
+
+    it "shows the current version" do
+      within ".definition-data__item.versions_count" do
+        expect(page).to have_content("VERSION 1")
+      end
     end
 
     context "without category or scope" do
