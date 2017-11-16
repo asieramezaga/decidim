@@ -4,6 +4,7 @@ require "spec_helper"
 
 describe Decidim::Accountability::Admin::UpdateResult do
   let(:result) { create :result }
+  let(:user) { create :user, organization: organization }
   let(:organization) { result.feature.organization }
   let(:scope) { create :scope, organization: organization }
   let(:category) { create :category, participatory_space: participatory_process }
@@ -36,6 +37,7 @@ describe Decidim::Accountability::Admin::UpdateResult do
   let(:form) do
     double(
       invalid?: invalid,
+      current_user: user,
       title: { en: "title" },
       description: { en: "description" },
       proposal_ids: proposals.map(&:id),
@@ -64,6 +66,13 @@ describe Decidim::Accountability::Admin::UpdateResult do
     it "updates the result" do
       subject.call
       expect(translated(result.title)).to eq "title"
+    end
+
+    it "creates a new version for the result", versioning: true do
+      expect do
+        subject.call
+      end.to change { result.versions.count }.by(1)
+      expect(result.versions.last.whodunnit).to eq user.to_gid.to_s
     end
 
     it "sets the scope" do

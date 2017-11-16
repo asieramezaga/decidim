@@ -4,6 +4,7 @@ require "spec_helper"
 
 describe Decidim::Accountability::Admin::CreateResult do
   let(:organization) { create :organization, available_locales: [:en] }
+  let(:user) { create :user, organization: organization }
   let(:participatory_process) { create :participatory_process, organization: organization }
   let(:current_feature) { create :accountability_feature, participatory_space: participatory_process }
   let(:scope) { create :scope, organization: organization }
@@ -36,6 +37,7 @@ describe Decidim::Accountability::Admin::CreateResult do
   let(:form) do
     double(
       invalid?: invalid,
+      current_user: user,
       current_feature: current_feature,
       title: { en: "title" },
       description: { en: "description" },
@@ -71,6 +73,12 @@ describe Decidim::Accountability::Admin::CreateResult do
     it "sets the scope" do
       subject.call
       expect(result.scope).to eq scope
+    end
+
+    it "creates a new version for the result", versioning: true do
+      subject.call
+      expect(result.versions.count).to eq 1
+      expect(result.versions.last.whodunnit).to eq user.to_gid.to_s
     end
 
     it "sets the category" do
