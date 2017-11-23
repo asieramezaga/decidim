@@ -53,7 +53,7 @@ describe "Explore versions", versioning: true, type: :feature do
     it "shows the version author and creation date" do
       within ".card--list__item:last-child" do
         expect(page).to have_content("test suite")
-        expect(page).to have_content(Date.today.strftime("%d/%m/%Y"))
+        expect(page).to have_content(Time.zone.today.strftime("%d/%m/%Y"))
       end
     end
   end
@@ -84,7 +84,7 @@ describe "Explore versions", versioning: true, type: :feature do
     it "shows the version author and creation date" do
       within ".card.extra.definition-data" do
         expect(page).to have_content("test suite")
-        expect(page).to have_content(Date.today.strftime("%d/%m/%Y"))
+        expect(page).to have_content(Time.zone.today.strftime("%d/%m/%Y"))
       end
     end
 
